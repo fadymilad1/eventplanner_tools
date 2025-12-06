@@ -1,0 +1,89 @@
+<div class="event-form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Edit Event' : 'Create New Event' }}</h1>
+    <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
+  </div>
+
+  <div *ngIf="loading && isEditMode" class="loading">Loading event...</div>
+
+  <form *ngIf="!loading || !isEditMode" (ngSubmit)="onSubmit()" class="event-form">
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <div class="form-group">
+      <label for="title">Title *</label>
+      <input
+        type="text"
+        id="title"
+        [(ngModel)]="event.title"
+        name="title"
+        class="form-control"
+        required
+        minlength="3"
+        maxlength="255"
+        placeholder="Enter event title"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        [(ngModel)]="event.description"
+        name="description"
+        class="form-control"
+        rows="4"
+        maxlength="2000"
+        placeholder="Enter event description"
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="event_date">Date *</label>
+        <input
+          type="date"
+          id="event_date"
+          [(ngModel)]="event.event_date"
+          name="event_date"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="event_time">Time *</label>
+        <input
+          type="time"
+          id="event_time"
+          [(ngModel)]="event.event_time"
+          name="event_time"
+          class="form-control"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="location">Location *</label>
+      <input
+        type="text"
+        id="location"
+        [(ngModel)]="event.location"
+        name="location"
+        class="form-control"
+        required
+        minlength="3"
+        maxlength="255"
+        placeholder="Enter event location"
+      />
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        {{ loading ? 'Saving...' : (isEditMode ? 'Update Event' : 'Create Event') }}
+      </button>
+    </div>
+  </form>
+</div>
+

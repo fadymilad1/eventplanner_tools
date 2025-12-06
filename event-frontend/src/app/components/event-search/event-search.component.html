@@ -1,0 +1,93 @@
+<div class="search-container">
+  <div class="search-header">
+    <h1>Search Events</h1>
+    <button class="btn btn-secondary" (click)="router.navigate(['/dashboard'])">Back to Dashboard</button>
+  </div>
+
+  <div class="search-form-container">
+    <form (ngSubmit)="search()" class="search-form">
+      <div class="form-group">
+        <label for="keyword">Keyword</label>
+        <input
+          type="text"
+          id="keyword"
+          [(ngModel)]="searchParams.keyword"
+          name="keyword"
+          class="form-control"
+          placeholder="Search by title or description"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="startDate">Start Date</label>
+          <input
+            type="date"
+            id="startDate"
+            [(ngModel)]="searchParams.startDate"
+            name="startDate"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="endDate">End Date</label>
+          <input
+            type="date"
+            id="endDate"
+            [(ngModel)]="searchParams.endDate"
+            name="endDate"
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select
+          id="role"
+          [(ngModel)]="searchParams.role"
+          name="role"
+          class="form-control"
+        >
+          <option [ngValue]="undefined">All Events</option>
+          <option value="organizer">Events I'm Organizing</option>
+          <option value="attendee">Events I'm Attending</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="clearSearch()">Clear</button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          {{ loading ? 'Searching...' : 'Search' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="search-results">
+    <div *ngIf="loading" class="loading">Searching events...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <div *ngIf="!loading && !error && hasSearched">
+      <div class="results-header">
+        <h2>Search Results ({{ events.length }})</h2>
+      </div>
+
+      <div *ngIf="events.length === 0" class="empty-state">
+        <p>No events found matching your criteria.</p>
+      </div>
+
+      <div class="events-grid">
+        <div *ngFor="let event of events" class="event-card" (click)="viewEvent(event.id!)">
+          <h3>{{ event.title }}</h3>
+          <p class="event-date">{{ formatDate(event.event_date) }} at {{ event.event_time }}</p>
+          <p class="event-location">{{ event.location }}</p>
+          <p class="event-description">{{ event.description }}</p>
+          <p class="event-organizer">Organized by: {{ event.organizer_email }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+*.md
+*.sql
+*.json
+!package.json
+!package-lock.json
+test-*.js
+*.test.js
+src/config/db.test.js

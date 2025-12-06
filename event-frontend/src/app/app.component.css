@@ -1,0 +1,5 @@
+/* App component - uses router-outlet */
+:host {
+  display: block;
+  min-height: 100vh;
+}
