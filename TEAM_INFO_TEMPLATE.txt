@@ -1,0 +1,11 @@
+Team Members:
+- Name: [Your Name 1], ID: [ID1]
+- Name: [Your Name 2], ID: [ID2]
+- Name: [Your Name 3], ID: [ID3]
+
+GitHub Repositories:
+- Backend: https://github.com/your-username/event-planner-backend
+- Frontend: https://github.com/your-username/event-planner-frontend
+
+TA Name: [TA Name]
+

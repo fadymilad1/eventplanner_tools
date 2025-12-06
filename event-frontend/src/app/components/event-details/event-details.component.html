@@ -1,0 +1,133 @@
+<div class="event-details-container">
+  <div *ngIf="loading" class="loading">Loading event...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && event" class="event-details">
+    <div class="event-header">
+      <div>
+        <h1>{{ event.title }}</h1>
+        <p class="event-meta">
+          <span class="event-date">{{ formatDate(event.event_date) }} at {{ event.event_time }}</span>
+          <span class="event-location">{{ event.location }}</span>
+        </p>
+      </div>
+      <div class="event-actions" *ngIf="isOrganizer">
+        <button class="btn btn-secondary" (click)="editEvent()">Edit</button>
+        <button class="btn btn-danger" (click)="deleteEvent()">Delete</button>
+      </div>
+    </div>
+
+    <div class="event-description" *ngIf="event.description">
+      <h3>Description</h3>
+      <p>{{ event.description }}</p>
+    </div>
+
+    <div class="event-info">
+      <div class="info-item">
+        <strong>Organized by:</strong> {{ event.organizer_email }}
+      </div>
+    </div>
+
+    <!-- Attendance Section -->
+    <div class="attendance-section" *ngIf="!isOrganizer">
+      <h3>Your Attendance</h3>
+      <div class="attendance-buttons">
+        <button 
+          class="btn btn-success" 
+          [class.active]="myAttendance?.status === 'going'"
+          (click)="setAttendance('going')">
+          Going
+        </button>
+        <button 
+          class="btn btn-warning" 
+          [class.active]="myAttendance?.status === 'maybe'"
+          (click)="setAttendance('maybe')">
+          Maybe
+        </button>
+        <button 
+          class="btn btn-danger" 
+          [class.active]="myAttendance?.status === 'not_going'"
+          (click)="setAttendance('not_going')">
+          Not Going
+        </button>
+      </div>
+      <div *ngIf="myAttendance" class="current-status">
+        Current status: <span [class]="'status-badge ' + getAttendanceStatusClass(myAttendance.status)">
+          {{ myAttendance.status }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Organizer Section -->
+    <div class="organizer-section" *ngIf="isOrganizer">
+      <h3>Invitations</h3>
+      <div class="invite-form">
+        <div class="search-container">
+          <input 
+            type="email" 
+            [(ngModel)]="inviteeEmail" 
+            (input)="searchUsers()"
+            placeholder="Search users by email"
+            class="form-control"
+          />
+          <div class="search-results" *ngIf="searchResults.length > 0">
+            <div 
+              *ngFor="let user of searchResults" 
+              class="search-result-item"
+              (click)="inviteUser(user.id)">
+              {{ user.email }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="invitations-list">
+        <div *ngFor="let invitation of invitations" class="invitation-item">
+          <span>{{ invitation.invitee_email }}</span>
+          <span class="invitation-role">{{ invitation.role }}</span>
+          <span class="invitation-status" [class]="'status-' + invitation.status">
+            {{ invitation.status }}
+          </span>
+        </div>
+        <div *ngIf="invitations.length === 0" class="empty-state">
+          No invitations yet
+        </div>
+      </div>
+
+      <h3>Attendance</h3>
+      <div class="attendance-stats" *ngIf="attendanceStats">
+        <div class="stat-item">
+          <span class="stat-label">Going:</span>
+          <span class="stat-value">{{ attendanceStats.going }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Maybe:</span>
+          <span class="stat-value">{{ attendanceStats.maybe }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Not Going:</span>
+          <span class="stat-value">{{ attendanceStats.not_going }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total:</span>
+          <span class="stat-value">{{ attendanceStats.total }}</span>
+        </div>
+      </div>
+      <div class="attendance-list">
+        <div *ngFor="let att of attendance" class="attendance-item">
+          <span>{{ att.user_email }}</span>
+          <span [class]="'status-badge ' + getAttendanceStatusClass(att.status)">
+            {{ att.status }}
+          </span>
+        </div>
+        <div *ngIf="attendance.length === 0" class="empty-state">
+          No attendance records yet
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-button">
+    <button class="btn btn-secondary" (click)="router.navigate(['/dashboard'])">Back to Dashboard</button>
+  </div>
+</div>
+

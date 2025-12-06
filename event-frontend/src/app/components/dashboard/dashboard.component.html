@@ -1,0 +1,126 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Event Planner Dashboard</h1>
+    <div class="header-actions">
+      <button class="btn btn-success" (click)="createEvent()">Create Event</button>
+      <button class="btn btn-secondary" (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="user-info">
+    <p>Welcome, {{ user?.email }}</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar-container">
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchKeyword"
+        (keyup.enter)="performSearch()"
+        class="search-input"
+        placeholder="🔍 Search events by title or description..."
+      />
+      <button class="btn btn-primary search-btn" (click)="performSearch()" [disabled]="searchLoading">
+        {{ searchLoading ? 'Searching...' : 'Search' }}
+      </button>
+      <button class="btn btn-secondary" (click)="clearSearch()" *ngIf="searchKeyword || isSearching">
+        Clear
+      </button>
+    </div>
+    <div class="search-filters" *ngIf="!isSearching">
+      <select [(ngModel)]="searchRole" (change)="performSearch()" class="filter-select">
+        <option [ngValue]="undefined">All Events</option>
+        <option value="organizer">My Events</option>
+        <option value="attendee">Events I'm Attending</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'organized'"
+      (click)="setActiveTab('organized')">
+      My Events ({{ organizedEvents.length }})
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'invited'"
+      (click)="setActiveTab('invited')">
+      Invited Events ({{ invitedEvents.length }})
+    </button>
+  </div>
+
+  <div class="events-section">
+    <div *ngIf="loading" class="loading">Loading events...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <!-- Search Results -->
+    <div *ngIf="!loading && !error && isSearching">
+      <div class="results-header">
+        <h2>Search Results ({{ searchResults.length }})</h2>
+        <p *ngIf="searchKeyword" class="search-query">Searching for: "{{ searchKeyword }}"</p>
+      </div>
+      <div *ngIf="searchResults.length === 0 && !searchLoading" class="empty-state">
+        <p>No events found matching your search criteria.</p>
+        <button class="btn btn-primary" (click)="clearSearch()">Clear Search</button>
+      </div>
+      <div *ngIf="searchLoading" class="loading">Searching events...</div>
+      <div class="events-grid" *ngIf="!searchLoading">
+        <div *ngFor="let event of searchResults" class="event-card" (click)="viewEvent(event.id!)">
+          <h3>{{ event.title }}</h3>
+          <p class="event-date">{{ event.event_date }} at {{ event.event_time }}</p>
+          <p class="event-location">{{ event.location }}</p>
+          <p class="event-description">{{ event.description }}</p>
+          <p class="event-organizer" *ngIf="event.organizer_email">Organized by: {{ event.organizer_email }}</p>
+          <div class="event-actions">
+            <button class="btn btn-sm btn-primary" (click)="viewEvent(event.id!); $event.stopPropagation()">View</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regular Events (when not searching) -->
+    <div *ngIf="!loading && !error && !isSearching">
+      <div *ngIf="activeTab === 'organized'">
+        <div *ngIf="organizedEvents.length === 0" class="empty-state">
+          <p>You haven't created any events yet.</p>
+          <button class="btn btn-primary" (click)="createEvent()">Create Your First Event</button>
+        </div>
+        <div class="events-grid">
+          <div *ngFor="let event of organizedEvents" class="event-card">
+            <h3>{{ event.title }}</h3>
+            <p class="event-date">{{ event.event_date }} at {{ event.event_time }}</p>
+            <p class="event-location">{{ event.location }}</p>
+            <p class="event-description">{{ event.description }}</p>
+            <div class="event-actions">
+              <button class="btn btn-sm btn-primary" (click)="viewEvent(event.id!)">View</button>
+              <button class="btn btn-sm btn-secondary" (click)="editEvent(event.id!)">Edit</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteEvent(event.id!)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'invited'">
+        <div *ngIf="invitedEvents.length === 0" class="empty-state">
+          <p>You haven't been invited to any events yet.</p>
+        </div>
+        <div class="events-grid">
+          <div *ngFor="let event of invitedEvents" class="event-card">
+            <h3>{{ event.title }}</h3>
+            <p class="event-date">{{ event.event_date }} at {{ event.event_time }}</p>
+            <p class="event-location">{{ event.location }}</p>
+            <p class="event-description">{{ event.description }}</p>
+            <p class="event-organizer">Organized by: {{ event.organizer_email }}</p>
+            <div class="event-actions">
+              <button class="btn btn-sm btn-primary" (click)="viewEvent(event.id!)">View</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
