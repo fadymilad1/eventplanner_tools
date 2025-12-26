@@ -30,7 +30,8 @@ const corsOptions = {
     'http://localhost',        // Docker frontend (default port)
     'http://127.0.0.1:4200',
     'http://127.0.0.1:80',
-    'http://127.0.0.1'
+    'http://127.0.0.1',
+    'https://event-frontend-amrm72004-dev.apps.rm3.7wse.p1.openshiftapps.com'  // OpenShift frontend
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
